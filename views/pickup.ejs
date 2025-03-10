@@ -4,13 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick-up Notification</title>
+    <script>
+        function searchSTN() {
+            const stn = document.getElementById("stnInput").value.trim();
+
+            if (stn === "") return; // Do nothing if the input is empty
+
+            fetch(`/pickup-search?stn=${stn}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // If STN is found, display details in a table
+                        let resultHTML = `
+                            <h2>STN Details</h2>
+                            <table border="1">
+                                <tr><th>Service Tracking Number</th><td>${data.details.service_tracking_number}</td></tr>
+                                <tr><th>Service Slip Number</th><td>${data.details.service_slip_number}</td></tr>
+                                <tr><th>Client Name</th><td>${data.details.client_name}</td></tr>
+                                <tr><th>Contact Person</th><td>${data.details.contact_person}</td></tr>
+                                <tr><th>Contact Number</th><td>${data.details.contact_number}</td></tr>
+                                <tr><th>Email Address</th><td>${data.details.email}</td></tr>
+                                <tr><th>Model Number</th><td>${data.details.model_number}</td></tr>
+                                <tr><th>Serial Number</th><td>${data.details.serial_number}</td></tr>
+                                <tr><th>Warranty Status</th><td>${data.details.warranty_check}</td></tr>
+                                <tr><th>Quotation Sent Date</th><td>${data.details.quotation_sent}</td></tr>
+                                <tr><th>Quotation Received from Client</th><td>${data.details.quotation_received}</td></tr>
+                                <tr><th>Quotation Price</th><td>${data.details.quotation_price}</td></tr>
+                                <tr><th>ETA of Parts</th><td>${data.details.eta_parts}</td></tr>
+                                <tr><th>Machine Status</th><td>${data.details.machine_status}</td></tr>
+                                <tr><th>Return Receipt Date</th><td>${data.details.rr_created}</td></tr>
+                            </table>
+                        `;
+                        document.getElementById("result").innerHTML = resultHTML;
+                    } else {
+                        // If no data found, clear input and show alert
+                        document.getElementById("stnInput").value = "";
+                        document.getElementById("result").innerHTML = "";
+                        alert("No matching data found.");
+                    }
+                })
+                .catch(error => console.error("❌ Error searching STN:", error));
+        }
+    </script>
 </head>
 <body>
     <h1>Pick-up Notification</h1>
-    <form action="/send" method="POST">
-        <input type="text" name="number" placeholder="Enter Phone Number" required>
-        <textarea name="message" placeholder="Enter Message">Your item is ready for pickup.</textarea>
-        <button type="submit">Send SMS</button>
-    </form>
+    
+    <label for="stnInput">Enter STN:</label>
+    <input type="text" id="stnInput" name="stn" placeholder="Enter STN">
+    <button onclick="searchSTN()">Search STN</button>
+
+    <div id="result"></div>
 </body>
 </html>
