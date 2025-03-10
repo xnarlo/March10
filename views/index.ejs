@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <p>Select an option from the dropdown inside each card:</p>
+
+    <div class="card-container">
+
+        <!-- Card 1: Send SMS -->
+        <div class="card">
+            <h5 class="card-title">Send SMS</h5>
+            <select id="smsOptions" class="dropdown" onchange="location = this.value;">
+                <option selected disabled>Choose an option</option>
+                <option value="/sendsms?message=Your%20item%20is%20ready%20for%20pickup">Pick-up Notification</option>
+                <option value="/sendsms?message=Reminder:%20Please%20check%20your%20quotation">Quotation Reminder</option>
+                <option value="/sendsms?message=Your%20repair%20is%20complete">Repair Update</option>
+                <option value="/sendsms?message=Urgent:%20Forfeiture%20warning!">Forfeiture Warning</option>
+                <option disabled>──────────</option>
+                <option value="/sendsms">Manually send SMS</option>
+            </select>
+        </div>
+
+        <!-- Card 2: Initiate Call -->
+        <div class="card">
+            <h5 class="card-title">Initiate CALL</h5>
+            <a href="/callclient">
+                <button class="call-btn">Call Client</button>
+            </a>
+        </div>
+
+    </div>
+</body>
+</html>

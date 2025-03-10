@@ -14,10 +14,13 @@ parser.on("data", (data) => {
     }
 });
 
-// Render SMS form
-router.get("/sendsms", (req, res) => res.render("sendsms"));
+// ✅ Render SMS form with predefined messages
+router.get("/sendsms", (req, res) => {
+    const predefinedMessage = req.query.message || ""; // Extract message from query
+    res.render("sendsms", { predefinedMessage });
+});
 
-// API to get SMS message parts
+// ✅ API to get SMS message parts
 router.get("/get-message-parts", (req, res) => res.json({ totalParts: latestMessageParts }));
 
 const waitForSmsSent = async () => {
@@ -39,50 +42,18 @@ const waitForSmsSent = async () => {
     });
 };
 
-// Send SMS Route
+// ✅ Send SMS Route
 router.post("/send", async (req, res) => {
     if (isProcessing) return res.status(429).send("⚠️ SMS already being processed. Please wait.");
 
     isProcessing = true;
     let { number, message } = req.body;
-    const maxPartLength = 150;
-
-    if (message.length <= maxPartLength) {
-        try {
-            serialPort.write(`SEND_SMS,${number},${message}\n`);
-            await waitForSmsSent();
-            isProcessing = false;
-            return res.send("✅ SMS sent successfully.");
-        } catch (error) {
-            isProcessing = false;
-            return res.status(500).send(`❌ Error: ${error.message}`);
-        }
-    }
-
-    // Handle multipart SMS
-    const totalParts = Math.ceil(message.length / maxPartLength);
-    latestMessageParts = totalParts;
-    let failedParts = 0;
+    serialPort.write(`SEND_SMS,${number},${message}\n`);
 
     try {
-        for (let i = 0; i < totalParts; i++) {
-            let partMessage = message.substring(i * maxPartLength, (i + 1) * maxPartLength);
-            let fullMessage = `(${i + 1}/${totalParts}) ${partMessage}`;
-            serialPort.write(`SEND_SMS,${number},${fullMessage}\n`);
-
-            try {
-                await waitForSmsSent();
-            } catch {
-                failedParts++;
-            }
-
-            await new Promise(resolve => setTimeout(resolve, 2000));
-        }
-
+        await waitForSmsSent();
         isProcessing = false;
-        return failedParts === 0
-            ? res.send("✅ All SMS parts sent successfully.")
-            : res.status(500).send(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+        return res.send("✅ SMS sent successfully.");
     } catch (error) {
         isProcessing = false;
         return res.status(500).send(`❌ Error: ${error.message}`);

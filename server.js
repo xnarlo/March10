@@ -3,7 +3,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const bodyParser = require("body-parser");
 const { serialPort, parser } = require("./serial");
-const mainRoutes = require("./routes/mainRoutes"); // Updated filename
+const mainRoutes = require("./routes/mainRoutes");
 
 require("dotenv").config();
 
@@ -32,7 +32,7 @@ parser.on("data", (data) => {
     }
 });
 
-// Use centralized routes
+// Use routes
 app.use("/", mainRoutes);
 
 // Start server
