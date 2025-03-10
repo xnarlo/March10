@@ -16,12 +16,15 @@
             <h5 class="card-title">Send SMS</h5>
             <select id="smsOptions" class="dropdown" onchange="location = this.value;">
                 <option selected disabled>Choose an option</option>
-                <option value="/sendsms?message=Your%20item%20is%20ready%20for%20pickup">Pick-up Notification</option>
+                <!--pickup alreeady connected to router-->
+                <option value="/pickup">Pick-up Notification</option>
                 <option value="/sendsms?message=Reminder:%20Please%20check%20your%20quotation">Quotation Reminder</option>
                 <option value="/sendsms?message=Your%20repair%20is%20complete">Repair Update</option>
                 <option value="/sendsms?message=Urgent:%20Forfeiture%20warning!">Forfeiture Warning</option>
                 <option disabled>──────────</option>
-                <option value="/sendsms">Manually send SMS</option>
+             
+             <!-- sendsms already connected to router-->
+                <option value="/sendsms">Manually send SMS</option> 
             </select>
         </div>
 
