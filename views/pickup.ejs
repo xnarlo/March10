@@ -8,7 +8,7 @@
         function searchSTN() {
             const stn = document.getElementById("stnInput").value.trim();
 
-            if (stn === "") return; // Do nothing if the input is empty
+            if (stn === "") return; // Do nothing if input is empty
 
             fetch(`/pickup-search?stn=${stn}`)
                 .then(response => response.json())
@@ -45,6 +45,16 @@
                 })
                 .catch(error => console.error("❌ Error searching STN:", error));
         }
+
+        // ✅ Listen for the Enter key on the search field
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("stnInput").addEventListener("keypress", function(event) {
+                if (event.key === "Enter") { // ✅ Check if the key pressed is "Enter"
+                    event.preventDefault(); // Prevent form submission if inside a form
+                    searchSTN(); // Call the search function
+                }
+            });
+        });
     </script>
 </head>
 <body>
