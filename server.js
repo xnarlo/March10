@@ -3,6 +3,7 @@ const http = require("http");
 const { Server } = require("socket.io");
 const bodyParser = require("body-parser");
 const { serialPort, parser } = require("./serial");
+const db = require("./config/db");
 const mainRoutes = require("./routes/mainRoutes");
 
 require("dotenv").config();
@@ -15,6 +16,18 @@ const port = 3000;
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+// Ensure MySQL is connected before starting the server
+db.connect((err) => {
+    if (err) {
+        console.error("❌ Database connection failed. Exiting...");
+        process.exit(1); // Stop the server if the database fails
+    } else {
+        console.log("✅ Connected to MySQL Database");
+        // Start server only if DB is connected
+        server.listen(port, () => console.log(`🚀 Server running on port ${port}`));
+    }
+});
 
 // Handle serial port events
 serialPort.on("open", () => console.log("✅ Serial Port Opened"));
@@ -34,6 +47,3 @@ parser.on("data", (data) => {
 
 // Use routes
 app.use("/", mainRoutes);
-
-// Start server
-server.listen(port, () => console.log(`🚀 Server running on port ${port}`));
