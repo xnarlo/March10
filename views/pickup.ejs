@@ -19,25 +19,33 @@
                             <h2>STN Details</h2>
                             <table border="1">
                                 <tr><th>Service Tracking Number</th><td>${data.details.service_tracking_number}</td></tr>
-                                <tr><th>Service Slip Number</th><td>${data.details.service_slip_number}</td></tr>
+                                <tr><th>Service Slip Number</th><td id="ss_number">${data.details.service_slip_number}</td></tr>
                                 <tr><th>Client Name</th><td>${data.details.client_name}</td></tr>
                                 <tr><th>Contact Person</th><td>${data.details.contact_person}</td></tr>
-                                <tr><th>Contact Number</th><td>${data.details.contact_number}</td></tr>
+                                <tr><th>Contact Number</th><td id="contact_number">${data.details.contact_number}</td></tr>
                                 <tr><th>Email Address</th><td>${data.details.email}</td></tr>
-                                <tr><th>Model Number</th><td>${data.details.model_number}</td></tr>
-                                <tr><th>Serial Number</th><td>${data.details.serial_number}</td></tr>
+                                <tr><th>Model Number</th><td id="machine_model">${data.details.model_number}</td></tr>
+                                <tr><th>Serial Number</th><td id="serial_number">${data.details.serial_number}</td></tr>
                                 <tr><th>Warranty Status</th><td>${data.details.warranty_check}</td></tr>
                                 <tr><th>Quotation Sent Date</th><td>${data.details.quotation_sent}</td></tr>
                                 <tr><th>Quotation Received from Client</th><td>${data.details.quotation_received}</td></tr>
-                                <tr><th>Quotation Price</th><td>${data.details.quotation_price}</td></tr>
+                                <tr><th>Quotation Price</th><td id="quotation_price">${data.details.quotation_price}</td></tr>
                                 <tr><th>ETA of Parts</th><td>${data.details.eta_parts}</td></tr>
                                 <tr><th>Machine Status</th><td>${data.details.machine_status}</td></tr>
                                 <tr><th>Return Receipt Date</th><td>${data.details.rr_created}</td></tr>
                             </table>
                         `;
+
                         document.getElementById("result").innerHTML = resultHTML;
+
+                        // ✅ Auto-fill contact number field
+                        document.getElementById("contactField").value = data.details.contact_number;
+
+                        // ✅ Reset radio buttons & generated text field
+                        document.getElementById("balanceAmount").style.display = "none";
+                        document.getElementById("paidAmount").value = "";
+                        document.getElementById("generatedText").value = "";
                     } else {
-                        // If no data found, clear input and show alert
                         document.getElementById("stnInput").value = "";
                         document.getElementById("result").innerHTML = "";
                         alert("No matching data found.");
@@ -46,24 +54,77 @@
                 .catch(error => console.error("❌ Error searching STN:", error));
         }
 
-        // ✅ Listen for the Enter key on the search field
+        // ✅ Listen for Enter key on search field
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("stnInput").addEventListener("keypress", function(event) {
-                if (event.key === "Enter") { // ✅ Check if the key pressed is "Enter"
-                    event.preventDefault(); // Prevent form submission if inside a form
-                    searchSTN(); // Call the search function
+                if (event.key === "Enter") {
+                    event.preventDefault();
+                    searchSTN();
                 }
             });
         });
+
+        function toggleBalanceField() {
+            const balanceField = document.getElementById("balanceAmount");
+            const paidAmount = document.getElementById("paidAmount");
+            const outstanding = document.getElementById("withBalance").checked;
+
+            balanceField.style.display = outstanding ? "block" : "none";
+            paidAmount.value = ""; // Reset field when switching
+            generateMessage();
+        }
+
+        function generateMessage() {
+            const machineModel = document.getElementById("machine_model").innerText;
+            const ssNumber = document.getElementById("ss_number").innerText;
+            const serialNumber = document.getElementById("serial_number").innerText;
+            const quotationPrice = parseFloat(document.getElementById("quotation_price").innerText) || 0;
+            const outstanding = document.getElementById("withBalance").checked;
+            let message = "";
+
+            if (outstanding) {
+                const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
+                const balance = quotationPrice - paidAmount;
+                message = `This is a generated message – do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. A balance of ${balance.toFixed(2)} PHP should be paid before the release. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590`;
+            } else {
+                message = `This is a generated message – do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590`;
+            }
+
+            document.getElementById("generatedText").value = message;
+        }
     </script>
 </head>
 <body>
     <h1>Pick-up Notification</h1>
-    
+
     <label for="stnInput">Enter STN:</label>
     <input type="text" id="stnInput" name="stn" placeholder="Enter STN">
     <button onclick="searchSTN()">Search STN</button>
 
     <div id="result"></div>
+
+    <h2>Contact Information</h2>
+    <label for="contactField">Contact Number:</label>
+    <input type="text" id="contactField" readonly>
+
+    <h2>Generate Pickup Message</h2>
+
+    <label>
+        <input type="radio" name="balanceOption" id="withoutBalance" onchange="toggleBalanceField()" checked>
+        Without balance
+    </label>
+    <label>
+        <input type="radio" name="balanceOption" id="withBalance" onchange="toggleBalanceField()">
+        With outstanding balance
+    </label>
+
+    <div id="balanceAmount" style="display: none;">
+        <label for="paidAmount">Amount Paid:</label>
+        <input type="number" id="paidAmount" oninput="generateMessage()">
+    </div>
+
+    <h3>Generated Message</h3>
+    <textarea id="generatedText" rows="4" readonly></textarea>
+
 </body>
 </html>
