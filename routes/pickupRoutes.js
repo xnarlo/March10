@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router();
+const router = express.Router(); // ✅ Define router before using it
 const db = require("../config/db"); // ✅ Import database connection
 
 // Render the Pick-up Notification page
@@ -42,11 +42,29 @@ router.get("/pickup-search", (req, res) => {
         }
 
         if (results.length > 0) {
-            res.json({ success: true, details: results[0] }); // Return first matching record
+            let details = results[0];
+
+            // ✅ Improved date formatting function to prevent errors
+            const formatDate = (date) => {
+                if (!date || isNaN(new Date(date).getTime())) return ""; // Return empty if invalid
+                return new Date(date).toISOString().split("T")[0]; // Convert to YYYY-MM-DD
+            };
+
+            details.quotation_sent = formatDate(details.quotation_sent);
+            details.quotation_received = formatDate(details.quotation_received);
+            details.eta_parts = formatDate(details.eta_parts);
+            details.rr_created = formatDate(details.rr_created);
+
+            // ✅ Replace null values with empty strings
+            Object.keys(details).forEach((key) => {
+                if (details[key] === null) details[key] = "";
+            });
+
+            res.json({ success: true, details });
         } else {
             res.json({ success: false }); // No match found
         }
     });
 });
 
-module.exports = router;
+module.exports = router; // ✅ Export the router correctly
