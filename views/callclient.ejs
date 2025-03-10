@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Client</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Call Client</h1>
+    <form id="makeCallForm">
+        <input type="text" name="number" placeholder="Enter Phone Number" required>
+        <button type="submit">Make Call</button>
+    </form>
+    <form id="endCallForm">
+        <button type="submit">End Call</button>
+    </form>
+
+    <script>
+        const socket = io();
+    
+        // Handle call status updates only once
+        socket.on('call_status', (status) => {
+            if (status === "CALL_STARTED") {
+                alert("✅ Call Initiated!");
+            } else if (status === "CALL_ENDED") {
+                alert("📞 Call Ended!");
+            }
+        });
+    
+        document.getElementById('makeCallForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const number = this.number.value;
+    
+            fetch('/call', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `number=${encodeURIComponent(number)}`,
+            }).then(response => response.text())
+              .then(data => console.log("📞 Call command sent, waiting for response..."));
+        });
+    
+        document.getElementById('endCallForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            fetch('/endcall', {
+                method: 'POST',
+            }).then(response => response.text())
+              .then(data => console.log("📴 End Call command sent, waiting for response..."));
+        });
+    </script>
+    
+</body>
+</html>

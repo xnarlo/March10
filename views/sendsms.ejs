@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send SMS</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+    <h1>Send SMS</h1>
+    <form id="smsForm">
+        <input type="text" name="number" placeholder="Enter Phone Number" required>
+        <textarea name="message" placeholder="Enter Message" required></textarea>
+        <button type="submit">Send SMS</button>
+    </form>
+
+    <script>
+        const socket = io();
+        let totalParts = 1;
+        let sentParts = 0;
+        let failed = false;
+        let isSending = false; // Prevent multiple submissions
+    
+        socket.on('sms_status', (status) => {
+            if (status === "SMS_SENT") {
+                sentParts++;
+                console.log(`✅ SMS part ${sentParts}/${totalParts} sent.`);
+    
+                if (sentParts >= totalParts) {
+                    alert("✅ SMS sent successfully!");
+                    isSending = false; // Allow new submissions
+                    document.querySelector('button[type="submit"]').disabled = false; // Re-enable the button
+                }
+            } else if (status === "SMS_FAILED") {
+                failed = true;
+                alert("❌ SMS Sending Failed! Some messages may not have been sent.");
+                isSending = false; // Allow new submissions
+                document.querySelector('button[type="submit"]').disabled = false;
+            }
+        });
+    
+        document.getElementById('smsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+    
+            if (isSending) return; // Prevent duplicate submissions
+            isSending = true;
+            document.querySelector('button[type="submit"]').disabled = true; // Disable the button
+    
+            const formData = new FormData(this);
+            sentParts = 0;
+            failed = false;
+    
+            fetch('/send', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            }).then(response => response.text())
+              .then(data => {
+                  console.log("📨 SMS sending started...");
+              }).catch(error => {
+                  console.error("❌ Error sending SMS:", error);
+                  isSending = false;
+                  document.querySelector('button[type="submit"]').disabled = false;
+              });
+    
+            fetch('/get-message-parts')
+                .then(response => response.json())
+                .then(data => {
+                    totalParts = data.totalParts || 1;
+                });
+        });
+    </script>
+    
+    
+    
+    
+    
+    
+    
+</body>
+</html>

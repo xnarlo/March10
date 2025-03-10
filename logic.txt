@@ -1,0 +1,63 @@
+Two Views: There are two separate views, one for sending SMS (sendsms.ejs) and one for making calls (callclient.ejs). Each view has its own form and button for the respective action.
+
+Send SMS Button: When the "Send SMS" button in sendsms.ejs is clicked, the data sent to the server includes the SEND_SMS command followed by the phone number and message. The data format is SEND_SMS,<number>,<message>.
+
+Make Call Button: When the "Make Call" button in callclient.ejs is clicked, the data sent to the server includes the MAKE_CALL command followed by the phone number. The data format is MAKE_CALL,<number>.
+
+Arduino Parsing: The Arduino code reads the incoming data from the serial port. It checks whether the data starts with SEND_SMS or MAKE_CALL and then calls the appropriate function (sendSMS or makeCall) with the parsed phone number (and message for SMS).
+
+
+[search.ejs]
+
+The web app I am developing uses a database to query a search to match the service tracking number (stn) and print them inside a view named search.ejs. This view also has the text field in where the user enters the stn and click a button to initiate the search.
+
+If a record was found, user must pick from 2 radio buttons to determine if they have a balance. After processing, a message inside a text field is generated and a “Compose Text” button can be pressed. When the “compose text” button is pressed, it then redirects the app to the sendsms.ejs view. It should pass the values of the contact number and generated message into text fields inside the sendsms.ejs page.
+
+[sendsms.ejs]
+
+The sendsms.ejs page has 2 text fields. The 2 text fields should contain the values from search.ejs after the “compose text” button is clicked. The page also has a “Send SMS” button where it looks for the values inside the text fields and send a command to the Arduino Uno R4 where it then send AT commands into the SIM900 GSM module to send the text message.
+The text field inside the sendsms.ejs will be the contact number and message to be sent to the Arduino as a command. This ensures that the data passed along by search.ejs can be edited. 
+The sendsms.ejs should also handle the 7-bit encoding to make sure that it is set to GSM-7 and use appropriate AT commands.
+If the message length exceeds 160 characters, it should be automatically split into multiple messages, ensuring message integrity.
+Each message segment should include a reference to its position (e.g., '1/2', '2/2') to indicate order.
+
+
+[callclient.ejs]
+
+The callclient.ejs view has 1 text field and 2 buttons. The text field will accept a contact number. The 2 buttons labeled, “Call” and “Drop”. The “Call” button sends a command to the Arduino to use the data inside the text field and provide appropriate AT command. The “Drop” button terminates the call. 
+
+[api]
+The 2 views uses an api.js to pass along the commands to the Arduino which then parses the command to trigger the gsm module
+
+const express = require('express');
+const router = express.Router();
+const { sendCommand } = require('../serial');
+
+router.post('/send-sms', (req, res) => {
+    const { contactNumber, message } = req.body;
+    const command = `SEND_SMS number=${contactNumber}&message=${encodeURIComponent(message)}`;
+    sendCommand(command);
+    res.json({ success: true });
+});
+
+router.post('/call-client', (req, res) => {
+    const { contactNumber } = req.body;
+    const command = `CALL number=${contactNumber}`;
+    sendCommand(command);
+    res.json({ success: true });
+});
+
+router.post('/drop-call', (req, res) => {
+    const command = 'DROP';
+    sendCommand(command);
+    res.json({ success: true });
+});
+
+module.exports = router;
+
+[Arduino]
+
+Arduino Uno R4
+Hardware UART
+Use Serial and Serial1
+
