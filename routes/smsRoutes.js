@@ -48,6 +48,9 @@ router.post("/send", async (req, res) => {
 
     isProcessing = true;
     let { number, message } = req.body;
+    console.log("Sending SMS:", { number, message });  // Debug log REMOVE LATER
+    console.log("Sending SMS from page:", { number, message, length: message.length });
+
     serialPort.write(`SEND_SMS,${number},${message}\n`);
 
     try {
@@ -58,6 +61,11 @@ router.post("/send", async (req, res) => {
         isProcessing = false;
         return res.status(500).send(`❌ Error: ${error.message}`);
     }
+});
+
+// In routes/smsRoutes.js (or create a new route file if you prefer)
+router.get("/pickup-sms-page", (req, res) => {
+    res.render("pickup-sms-page");
 });
 
 module.exports = router;

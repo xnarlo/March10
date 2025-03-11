@@ -15,6 +15,7 @@ const port = 3000;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json()); // Add this line to parse JSON request bodies
 app.use(express.static("public"));
 
 // Ensure MySQL is connected before starting the server
