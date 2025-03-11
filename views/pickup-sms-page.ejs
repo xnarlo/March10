@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Send SMS</title>
+  <title>Pickup SMS Page</title>
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -13,30 +13,16 @@
     <textarea name="message" placeholder="Enter Message" required></textarea>
     <button type="submit">Send SMS</button>
   </form>
-  
-  <script>
-    // Fetch the saved message on page load to pre-fill the form fields
-    document.addEventListener("DOMContentLoaded", function() {
-      fetch("/api/get-saved-message")
-        .then(response => response.json())
-        .then(data => {
-          if (data.success && data.data) {
-            document.querySelector('input[name="number"]').value = data.data.contact_number;
-            document.querySelector('textarea[name="message"]').value = data.data.message;
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching saved message:", error);
-        });
-    });
 
-    // Initialize variables and Socket.io connection for SMS sending
+  <script>
+    // Initialize variables for SMS sending
     const socket = io();
     let totalParts = 1;
     let sentParts = 0;
     let failed = false;
     let isSending = false;
 
+    // Listen for SMS status events via Socket.io
     socket.on('sms_status', (status) => {
       if (status === "SMS_SENT") {
         sentParts++;
@@ -54,12 +40,32 @@
       }
     });
 
+    // Pre-fill the form by fetching the saved message on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("/api/get-saved-message")
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.data) {
+            const phone = data.data.contact_number;
+            const msg = data.data.message;
+            console.log("Prepopulated phone:", phone);
+            console.log("Prepopulated message:", msg);
+            document.querySelector('input[name="number"]').value = phone;
+            document.querySelector('textarea[name="message"]').value = msg;
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching saved message:", error);
+        });
+    });
+
+    // Handle form submission to send the SMS command
     document.getElementById('smsForm').addEventListener('submit', function(event) {
       event.preventDefault();
       if (isSending) return; // Prevent duplicate submissions
       isSending = true;
       document.querySelector('button[type="submit"]').disabled = true;
-      
+
       const formData = new FormData(this);
       sentParts = 0;
       failed = false;
@@ -79,10 +85,10 @@
       });
 
       fetch('/get-message-parts')
-      .then(response => response.json())
-      .then(data => {
-        totalParts = data.totalParts || 1;
-      });
+        .then(response => response.json())
+        .then(data => {
+          totalParts = data.totalParts || 1;
+        });
     });
   </script>
 </body>
