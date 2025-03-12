@@ -19,7 +19,7 @@
     const socket = io();
     let totalParts = 1;
     let sentParts = 0;
-    let failed = false;
+    let failedParts = 0;
     let isSending = false;
 
     // Listen for SMS status events via Socket.io
@@ -27,16 +27,23 @@
       if (status === "SMS_SENT") {
         sentParts++;
         console.log(`✅ SMS part ${sentParts}/${totalParts} sent.`);
-        if (sentParts >= totalParts) {
-          alert("✅ SMS sent successfully!");
+        if (sentParts + failedParts >= totalParts) {
+          if (failedParts === 0) {
+            alert("✅ SMS sent successfully!");
+          } else {
+            alert(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+          }
           isSending = false;
           document.querySelector('button[type="submit"]').disabled = false;
         }
       } else if (status === "SMS_FAILED") {
-        failed = true;
-        alert("❌ SMS Sending Failed! Some messages may not have been sent.");
-        isSending = false;
-        document.querySelector('button[type="submit"]').disabled = false;
+        failedParts++;
+        console.log(`❌ SMS part failed. ${failedParts} parts failed.`);
+        if (sentParts + failedParts >= totalParts) {
+          alert(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+          isSending = false;
+          document.querySelector('button[type="submit"]').disabled = false;
+        }
       }
     });
 
@@ -68,7 +75,7 @@
 
       const formData = new FormData(this);
       sentParts = 0;
-      failed = false;
+      failedParts = 0;
 
       fetch('/send', {
         method: 'POST',
@@ -93,3 +100,5 @@
   </script>
 </body>
 </html>
+
+// This file provides the user interface for sending SMS messages related to pick-up notifications. It handles form submission, sends the SMS command to the server, and listens for SMS status updates via Socket.io. It alerts the user once all parts are sent or if any parts fail after retrying.

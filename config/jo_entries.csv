@@ -1,0 +1,51 @@
+stn,ss_number,client_name,contact_person,contact_number,email,model_number,serial_number,warranty_check,quotation_sent,quotation_received,quotation_price,eta_parts,machine_status,rr_created
+65412,57896,[WALK-IN] Company Alpha,Arvin Reyes,9204663854,alex01@zofrino.com,Lenovo Thinkpad E14,XG8P7D4KZ1,W,NULL,NULL,NULL,NULL,queued for checking,NULL
+65413,57897,[WALK-IN] Company Bravo,Lianne Mendoza,9234567891,bella92@traxion.net,Brother MFC-J200,M9T5J3QLF2,OOW,04/01/2025,07/01/2025,5000,60,waiting for client,NULL
+65414,57898,[WALK-IN] Company Charlie,Jomar Villanueva,9345678912,charlie87@venkora.org,EPSON L3110,ZK47XD1PFT,W,NULL,NULL,NULL,NULL,under repair,NULL
+65415,57899,[WALK-IN] Company Delta,Roselle Fernandez,9204663854,dannyX@floxmail.io,Epson L360,QJX5L98TM2,OOW,09/01/2025,10/03/2025,6502.5,60,waiting for parts,NULL
+65416,57900,[WALK-IN] Company Echo,Nico Dela Cruz,9567891234,emma.star@quatrix.co,Canon G2010,VF12Z7PKXG,W,NULL,NULL,NULL,NULL,under repair,NULL
+65417,57901,[WALK-IN] Company Foxtrot,Maricel Santos,9678912345,felix99@zorbitron.com,Acer TMP 214,LQ8M39TJF5,OOW,11/01/2025,20/01/2025,3500.25,15,waiting for client,NULL
+65418,57902,[WALK-IN] Company Golf,Marvin Salazar,9789123456,grace23@lumisoft.net,Lenovo Legion 5i,TP4XK7ZQ12,OOW,11/01/2025,23/01/2025,NULL,NULL,under repair,NULL
+65419,57903,[WALK-IN] Company Hotel,Angelie Cruz,9204663854,henry_45@vexora.org,Lenovo Yoga Slim 3,J9M5LQT823F,W,NULL,NULL,NULL,NULL,under repair,NULL
+65420,57904,[WALK-IN] Company India,Elmer Bautista,9912345678,isla.bee@novexa.io,Epson L15150,F7D4XGZK12,W,NULL,NULL,NULL,NULL,under repair,NULL
+65421,57905,[WALK-IN] Company Julliet,Dianne Pascual,9109876543,jackson777@trovex.co,Acer Nitro 5,QZL3M859TJX,OOW,13/01/2025,28/01/2025,412.25,15,under repair,NULL
+65422,57906,[WALK-IN] Company Kilo,Randy Soriano,9210987654,karen.m21@xantrix.net,HP Envy 360,T1XPF7D4ZQK,W,NULL,NULL,NULL,NULL,under repair,NULL
+65423,57907,[WALK-IN] Company Lima,Jennylyn Ramirez,9321098765,leo_x10@zenvora.com,HP Elitebook 440,J9MLQ85T23F,OOW,17/01/2025,02/02/2025,650,60,under repair,NULL
+65424,57908,[WALK-IN] Company Mike,Joel Fernandez,9432109876,mia.craft@veltrix.org,Lenovo Thinkbook 330,KX4TP7ZQ12D,OOW,18/01/2025,04/02/2025,8542.5,10,waiting for client,NULL
+65425,57909,[WALK-IN] Company November,Carmela Navarro,9543210987,noah.fresh@jupitex.co,Brother MFC-T4540,F7QXGZL3MT9,W,NULL,NULL,NULL,NULL,under repair,NULL
+65426,57910,[WALK-IN] Company Oscar,Carlo Agustin,9654321098,olivia_ray@froben.io,Apple Macbook Pro 14,M8J5LQT923F,OOW,NULL,NULL,10000,10,under repair,NULL
+65427,57911,[WALK-IN] Company Papa,Kristine De Leon,9204663854,peter.griff@texora.com,Dell Inspiron 3550,XG4TPZK712D,OOW,NULL,NULL,NULL,NULL,for quotation,NULL
+65428,57912,[WALK-IN] Company Quebec,Miguel Santos,9178543261,quinn_88@vortexa.net,Lenovo Ideapad 5 Pro,PZ4M8XG7T1D,OOW,NULL,NULL,3200,30,under repair,NULL
+65429,57913,[WALK-IN] Company Romeo,Josefa Dela Cruz,9267315489,ryan.pro@zontrix.org,Brother DCP-T720DW,KJ9LQ57XMT2,OOW,NULL,NULL,5000,60,under repair,NULL
+65430,57914,[WALK-IN] Company Sierra,Alvin Reyes,9152039874,sophia.lit@kalbex.co,EPSON EcoTank L5290,VF3D1PKZ47Q,OOW,NULL,NULL,1205.75,60,under repair,NULL
+65431,57915,[WALK-IN] Company Tango,Carmela Bautista,9276482105,tommy_7@quebrix.com,Canon Pixma G3020,XGQZL859T2K,W,NULL,NULL,NULL,NULL,under repair,NULL
+65432,57916,[WALK-IN] Company Uniform,Rogelio Mendoza,9204663854,ursula.m@wexoria.net,Acer Aspire 7,M9T5J38LQXF,OOW,05/02/2025,NULL,6542,10,waiting for client,NULL
+65433,57917,[WALK-IN] Company Victor,Lianne Navarro,9564173258,victor.ray@xeltron.org,Dell Vostro 3400,TPX4ZK712DF,OOW,05/02/2025,NULL,500,30,under repair,NULL
+65434,57918,[WALK-IN] Company Whiskey,Emilio Garcia,9187654329,winston99@glimera.io,HP Pavilion x360,F7D4XGZQK85,OOW,06/02/2025,NULL,1234.75,10,under repair,NULL
+65435,57919,[WALK-IN] Company Xray,Jasmine Villanueva,9773096542,xander.m@tronexa.com,Asus ROG Strix G16,LQ8M9T3J5KX,OOW,08/02/2025,NULL,6523,60,waiting for client,NULL
+65436,57920,[WALK-IN] Company Yankee,Arnold Padilla,9452109873,yolanda55@truflex.net,MSI Modern 14,QJX5L97MT42,OOW,08/02/2025,NULL,12445,10,waiting for client,NULL
+65437,57921,[WALK-IN] Company Zulu,Rowena Castillo,9635827410,zach.delta@novaplex.org,Samsung Galaxy Book3 Pro,T1XPF7D4ZQ9,W,NULL,NULL,NULL,NULL,under repair,NULL
+65438,12345,DRINX Company,Master Drin,9204663854,narlo@example.com,ModelX,SERIALNGMACHINE,OOW,15/02/2025,18/03/2025,1500,30,under repair,NULL
+65439,12346,GOMO SIM,Gomo Drin,9760445708,narlo@example.com,ModelX,SERIALNGMACHINE,OOW,14/02/2024,21/03/2025,2500,15,scheduled for return,05/03/2024
+65440,63325,Company AA,Eduardo Galima,0912 999 9876,nothing@nothing.ph,VP Router,SN1234,OOW,17/02/2025,23/03/2025,7800,10,waiting for parts,NULL
+65441,57922,[WALK-IN] Company Alpha2,David Santos,9123987456,david.s@zofrino.com,Lenovo Thinkpad E15,XG9P7D4LZ2,W,NULL,NULL,NULL,NULL,under repair,NULL
+65442,57923,[WALK-IN] Company Bravo2,Julie Mendoza,9235678912,julie.b@traxion.net,Brother MFC-J210,M9T6J4QLF3,OOW,19/02/2025,26/03/2025,800,10,waiting for parts,NULL
+65443,57924,[WALK-IN] Company Charlie2,Jose Villanueva,9346789123,jose.v@venkora.org,EPSON L3150,ZK48XD2PFT,W,NULL,NULL,NULL,NULL,under repair,NULL
+65444,57925,[WALK-IN] Company Delta2,Carlos Fernandez,9457891234,carlos.f@floxmail.io,Epson L365,QJX6L98TN3,OOW,23/02/2025,30/03/2025,1000,10,waiting for client,NULL
+65445,57926,[WALK-IN] Company Echo2,Ana Dela Cruz,9568912345,ana.dc@quatrix.co,Canon G2020,VF13Z7PKXH,W,NULL,NULL,NULL,NULL,under repair,NULL
+65446,57927,[WALK-IN] Company Foxtrot2,Marvin Santos,9679123456,marvin.s@zorbitron.com,Acer TMP 215,LQ8N40TJF6,OOW,28/02/2025,02/04/2025,2000,60,waiting for parts,NULL
+65447,57928,[WALK-IN] Company Golf2,Sandra Salazar,9789234567,sandra.s@lumisoft.net,Lenovo Legion 7i,TP5XK8ZQ13,OOW,28/02/2025,05/04/2025,2300,10,waiting for parts,NULL
+65448,57929,[WALK-IN] Company Hotel2,Angela Cruz,9892345678,angela.c@vexora.org,Lenovo Yoga Slim 5,J9N6LQT924F,W,NULL,NULL,NULL,NULL,under repair,NULL
+65449,57930,[WALK-IN] Company India2,Erwin Bautista,9913456789,erwin.b@novexa.io,Epson L15250,F7E5XGZK13,W,NULL,NULL,NULL,NULL,under repair,NULL
+65450,57931,[WALK-IN] Company Julliet2,Diana Pascual,9109987654,diana.p@trovex.co,Acer Nitro 7,QZM4M960TJY,OOW,05/03/2025,08/04/2025,6500,30,under repair,NULL
+65451,57932,[WALK-IN] Company Kilo2,Randy Solis,9204663854,randy.s@xantrix.net,HP Envy 370,T1YPF8D5ZQJ,W,NULL,NULL,NULL,NULL,scheduled for return,09/03/2025
+65452,57933,[WALK-IN] Company Lima2,Jen Ramirez,9322109876,jen.r@zenvora.com,HP Elitebook 450,J9NMQ96T34F,OOW,12/03/2025,11/04/2025,1500,10,waiting for client,NULL
+65453,57934,[WALK-IN] Company Mike2,Joel Santos,9433210987,joel.s@veltrix.org,Lenovo Thinkbook 350,KX5TP8ZQ13D,OOW,14/03/2025,14/04/2025,1400,10,waiting for parts,NULL
+65454,57935,[WALK-IN] Company November2,Carmen Navarro,9544321098,carmen.n@jupitex.co,Brother MFC-T4600,F7R5XGZL4MT,W,NULL,NULL,NULL,NULL,under repair,NULL
+65455,57936,[WALK-IN] Company Oscar2,Carlo Rivera,9655432109,carlo.r@froben.io,Apple Macbook Pro 15,M8J6LQT034F,OOW,17/03/2025,18/04/2025,1000,30,waiting for parts,NULL
+65456,57937,[WALK-IN] Company Papa2,Kris De Leon,9766543210,kris.d@texora.com,Dell Inspiron 3600,XG5TPZK823D,OOW,20/03/2025,20/04/2025,1200,30,waiting for parts,NULL
+65457,57938,[WALK-IN] Company Quebec2,Miguel Razon,9179654321,miguel.r@vortexa.net,Lenovo Ideapad 6 Pro,PZ5M9XG8T2D,OOW,22/03/2025,23/04/2025,1350,30,waiting for parts,NULL
+65458,57939,[WALK-IN] Company Romeo2,Josefa Cruz,9268426590,josefa.c@zontrix.org,Brother DCP-T725DW,KJ9MQ68XMT3,OOW,25/03/2025,27/04/2025,1240,15,waiting for client,NULL
+65459,57940,[WALK-IN] Company Sierra2,Alvin Enriquez,9153149875,alvin.e@kalbex.co,EPSON EcoTank L5300,VF4D2PKZ58Q,OOW,27/03/2025,29/04/2025,1324,30,waiting for client,NULL
+65460,57941,[WALK-IN] Company Tango2,Marco Bautista,9277593216,marco.b@quebrix.com,Canon Pixma G3050,XGQZL960T3K,W,28/03/2025,30/04/2025,NULL,NULL,under repair,NULL
+65461,57942,[WALK-IN] Company Uniform2,Emy Marcoleta,9156882463,emuy_marco@ggness.com,Keychron RGB,AHFVDI412,W,29/03/2025,01/05/2025,NULL,NULL,under repair,NULL

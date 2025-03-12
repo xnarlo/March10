@@ -68,3 +68,5 @@ router.get("/pickup-search", (req, res) => {
 });
 
 module.exports = router; // ✅ Export the router correctly
+
+// This file handles routes related to the pick-up notification feature. It renders the pick-up notification page and provides an endpoint to search for service tracking numbers (STN) in the database. If a matching STN is found, it returns the details of the service tracking number.

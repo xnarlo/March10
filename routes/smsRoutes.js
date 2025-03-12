@@ -29,6 +29,7 @@ router.get("/get-message-parts", (req, res) => {
     res.json({ totalParts: latestMessageParts });
 });
 
+// Function to wait for SMS_SENT status from the serial port
 const waitForSmsSent = async () => {
     return new Promise((resolve, reject) => {
         let timeout = setTimeout(() => reject(new Error("Timeout waiting for SMS_SENT")), 10000);
@@ -48,6 +49,7 @@ const waitForSmsSent = async () => {
     });
 };
 
+// Route to handle sending SMS
 router.post("/send", async (req, res) => {
     if (isProcessing) {
         return res.status(429).send("⚠️ SMS already being processed. Please wait.");
@@ -74,17 +76,37 @@ router.post("/send", async (req, res) => {
         }
     }
 
-    const totalParts = Math.ceil(message.length / maxPartLength);
-    latestMessageParts = totalParts;
+    // Function to split message into parts without splitting words
+    const splitMessage = (msg, maxLen) => {
+        let parts = [];
+        let currentPart = "";
+
+        msg.split(" ").forEach(word => {
+            if ((currentPart + word).length > maxLen) {
+                parts.push(currentPart.trim());
+                currentPart = word + " ";
+            } else {
+                currentPart += word + " ";
+            }
+        });
+
+        if (currentPart.trim().length > 0) {
+            parts.push(currentPart.trim());
+        }
+
+        return parts;
+    };
+
+    const messageParts = splitMessage(message, maxPartLength);
+    latestMessageParts = messageParts.length;
     let failedParts = 0;
 
     try {
-        for (let i = 0; i < totalParts; i++) {
-            let partMessage = message.substring(i * maxPartLength, (i + 1) * maxPartLength);
-            let fullMessage = `(${i + 1}/${totalParts}) ${partMessage}`;
+        for (let i = 0; i < messageParts.length; i++) {
+            let fullMessage = `(${i + 1}/${messageParts.length}) ${messageParts[i]}`;
             let command = `SEND_SMS,${number},${fullMessage}\n`;
             // Log each segmented command:
-            console.log(`Command being sent (part ${i + 1}/${totalParts}):`, command);
+            console.log(`Command being sent (part ${i + 1}/${messageParts.length}):`, command);
             let attempts = 0;
             let sent = false;
             while (attempts < 3 && !sent) {
@@ -109,5 +131,6 @@ router.post("/send", async (req, res) => {
     }
 });
 
-
 module.exports = router;
+
+// This file handles the sending of SMS messages, including splitting the message into parts if it exceeds 150 characters. It ensures that words are not split between parts and retries sending failed parts up to three times before alerting the user.
