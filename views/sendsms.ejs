@@ -8,6 +8,8 @@
 </head>
 <body>
     <h1>Send SMS</h1>
+    <p>Enter cellphone number starting with +63 or 09</p>
+    <p>Do not create new line inside message box</p>
     <form id="smsForm">
         <input type="text" name="number" placeholder="Enter Phone Number" required>
         <textarea name="message" placeholder="Enter Message" required></textarea>
@@ -82,4 +84,3 @@
 </body>
 </html>
 
-// This file provides the user interface for sending SMS messages. It handles form submission, sends the SMS command to the server, and listens for SMS status updates via Socket.io. It alerts the user once all parts are sent or if any parts fail after retrying.
