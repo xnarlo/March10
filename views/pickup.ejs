@@ -95,7 +95,7 @@ function searchSTN() {
             if (outstanding) {
                 const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
                 const balance = quotationPrice - paidAmount;
-                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. A balance of Php ${balance.toFixed(2)} should be paid before the release. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590`;
+                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. A balance of Php ${balance.toFixed(2)} should be paid before the release. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590 or 92`;
             } else {
                 message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590`;
             }
