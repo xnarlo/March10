@@ -119,7 +119,9 @@ router.post("/send", async (req, res) => {
                     attempts++;
                 }
             }
-            if (!sent) failedParts++;
+            if (!sent) {
+                failedParts++;
+            }
             await new Promise(resolve => setTimeout(resolve, 2000));
         }
         isProcessing = false;
@@ -133,4 +135,3 @@ router.post("/send", async (req, res) => {
 
 module.exports = router;
 
-// This file handles the sending of SMS messages, including splitting the message into parts if it exceeds 150 characters. It ensures that words are not split between parts and retries sending failed parts up to three times before alerting the user.
