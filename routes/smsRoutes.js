@@ -62,10 +62,8 @@ router.post("/send", async (req, res) => {
 
     if (message.length <= maxPartLength) {
         const command = `SEND_SMS,${number},${message}\n`;
-        // Add a log here:
         console.log("Command being sent:", command);
         try {
-            console.log("Command being sent:", command);
             serialPort.write(command);
             await waitForSmsSent();
             isProcessing = false;
@@ -105,24 +103,28 @@ router.post("/send", async (req, res) => {
         for (let i = 0; i < messageParts.length; i++) {
             let fullMessage = `(${i + 1}/${messageParts.length}) ${messageParts[i]}`;
             let command = `SEND_SMS,${number},${fullMessage}\n`;
-            // Log each segmented command:
             console.log(`Command being sent (part ${i + 1}/${messageParts.length}):`, command);
             let attempts = 0;
             let sent = false;
             while (attempts < 3 && !sent) {
-                console.log("Command being sent:", command);
+                console.log(`Attempt ${attempts + 1} for part ${i + 1}`);
                 serialPort.write(command);
                 try {
                     await waitForSmsSent();
                     sent = true;
                 } catch (error) {
                     attempts++;
+                    // Do not alert the user on each failed attempt—just log it.
+                    console.log(`Attempt ${attempts} failed for part ${i + 1}`);
+                }
+                // Wait 2 seconds before trying again if not yet sent.
+                if (!sent && attempts < 3) {
+                    await new Promise(resolve => setTimeout(resolve, 2000));
                 }
             }
             if (!sent) {
                 failedParts++;
             }
-            await new Promise(resolve => setTimeout(resolve, 2000));
         }
         isProcessing = false;
         if (failedParts === 0) res.send("✅ All SMS parts sent successfully.");
@@ -132,6 +134,7 @@ router.post("/send", async (req, res) => {
         res.status(500).send(`❌ Error: ${error.message}`);
     }
 });
+
 
 module.exports = router;
 
