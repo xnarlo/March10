@@ -7,6 +7,8 @@ const callRoutes = require("./callRoutes");    // Call handling routes
 const pickupRoutes = require("./pickupRoutes"); // Pickup route
 const pickupSmsRoutes = require("./pickupSmsRoutes"); // Pickup SMS route
 const quotationRoutes = require("./quotationRoutes"); // Quotation route
+const forfeitureRoutes = require("./forfeitureRoutes"); // Forfeiture route
+
 
 
 
@@ -16,5 +18,6 @@ router.use("/", callRoutes);
 router.use("/", pickupRoutes); 
 router.use("/", pickupSmsRoutes);
 router.use("/", quotationRoutes);
+router.use("/", forfeitureRoutes);
 
 module.exports = router;

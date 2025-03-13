@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forfeiture Notification</title>
+  <script>
+    function searchSTN() {
+      const stn = document.getElementById("stnInput").value.trim();
+      if (stn === "") return; // Do nothing if input is empty
+      
+      fetch(`/forfeiture-search?stn=${stn}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            const details = data.details;
+            // Build HTML table to display STN details
+            let resultHTML = `
+              <h2>STN Details</h2>
+              <table border="1">
+                <tr><th>Service Tracking Number</th><td>${details.service_tracking_number}</td></tr>
+                <tr><th>Service Slip Number</th><td>${details.service_slip_number}</td></tr>
+                <tr><th>Client Name</th><td>${details.client_name}</td></tr>
+                <tr><th>Contact Person</th><td>${details.contact_person}</td></tr>
+                <tr><th>Contact Number</th><td id="contactDisplay">${details.contact_number}</td></tr>
+                <tr><th>Email Address</th><td>${details.email}</td></tr>
+                <tr><th>Model Number</th><td>${details.model_number}</td></tr>
+                <tr><th>Serial Number</th><td>${details.serial_number}</td></tr>
+                <tr><th>Warranty Status</th><td>${details.warranty_check}</td></tr>
+                <tr><th>Quotation Sent Date</th><td>${details.quotation_sent}</td></tr>
+                <tr><th>Quotation Received Date</th><td>${details.quotation_received}</td></tr>
+                <tr><th>Quotation Price</th><td>${details.quotation_price}</td></tr>
+                <tr><th>ETA of Parts</th><td>${details.eta_parts}</td></tr>
+                <tr><th>Machine Status</th><td>${details.machine_status}</td></tr>
+                <tr><th>Return Receipt Date</th><td>${details.rr_created}</td></tr>
+              </table>
+            `;
+            document.getElementById("result").innerHTML = resultHTML;
+            
+            // Set contact number in hidden field for later use
+            document.getElementById("contactField").value = details.contact_number;
+            
+            // Check for rr_created: if not present, alert user
+            if (!details.rr_created) {
+              alert("No Return Receipt was printed. Manually check the status of the machine");
+              document.getElementById("generatedText").value = "";
+            } else {
+              // Calculate number of days = current date - rr_created
+              const rrCreatedDate = new Date(details.rr_created);
+              const currentDate = new Date();
+              const timeDiff = currentDate - rrCreatedDate; // in milliseconds
+              const numberOfDays = Math.floor(timeDiff / (1000 * 3600 * 24));
+              
+              // Generate the forfeiture message in the requested format
+              const message = `This is to inform you that we will be sending a forfeiture letter to your email: ${details.email} for Service Slip Number: ${details.service_slip_number}. The client was not able to pickup the machine, ${details.model_number} for ${numberOfDays} days. For questions or concerns, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590 or 92`;
+              
+              document.getElementById("generatedText").value = message;
+            }
+          } else {
+            document.getElementById("stnInput").value = "";
+            document.getElementById("result").innerHTML = "";
+            alert(data.message || "No matching data found.");
+          }
+        })
+        .catch(error => console.error("Error searching STN:", error));
+    }
+
+    // Allow Enter key to trigger search
+    document.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("stnInput").addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          searchSTN();
+        }
+      });
+    });
+
+    // Function to save the generated message and redirect to forfeiture-sms-page
+    function textClient() {
+      const contactNumber = document.getElementById("contactField").value;
+      const message = document.getElementById("generatedText").value;
+      if (!contactNumber || !message) {
+        alert("Contact number and message cannot be empty.");
+        return;
+      }
+      fetch("/api/save-message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contactNumber, message })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          window.location.href = "/forfeiture-sms-page";
+        } else {
+          alert("Error saving message: " + (data.error || data.message));
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while saving the message.");
+      });
+    }
+  </script>
+</head>
+<body>
+  <h1>Forfeiture Notification</h1>
+  <label for="stnInput">Enter STN:</label>
+  <input type="text" id="stnInput" name="stn" placeholder="Enter STN">
+  <button onclick="searchSTN()">Search STN</button>
+  
+  <div id="result"></div>
+  
+  <h3>Generated Forfeiture Message</h3>
+  <textarea id="generatedText" rows="4"></textarea>
+  
+  <!-- Hidden field for contact number -->
+  <input type="hidden" id="contactField">
+  
+  <br>
+  <button onclick="textClient()">Text Client</button>
+</body>
+</html>

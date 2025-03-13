@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Forfeiture SMS Page</title>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <h1>Send Forfeiture SMS</h1>
+  <form id="smsForm">
+    <input type="text" name="number" placeholder="Enter Phone Number" required>
+    <textarea name="message" placeholder="Enter Message" required></textarea>
+    <button type="submit">Send SMS</button>
+  </form>
+
+  <script>
+    const socket = io();
+    let totalParts = 1;
+    let sentParts = 0;
+    let failedParts = 0;
+    let isSending = false;
+
+    // Listen for SMS status events via Socket.IO
+    socket.on('sms_status', (status) => {
+      if (status === "SMS_SENT") {
+        sentParts++;
+        console.log(`✅ SMS part ${sentParts}/${totalParts} sent.`);
+        if (sentParts + failedParts >= totalParts) {
+          if (failedParts === 0) {
+            alert("✅ SMS sent successfully!");
+          } else {
+            alert(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+          }
+          isSending = false;
+          document.querySelector('button[type="submit"]').disabled = false;
+        }
+      } else if (status === "SMS_FAILED") {
+        failedParts++;
+        console.log(`❌ SMS part failed. ${failedParts} parts failed.`);
+        if (sentParts + failedParts >= totalParts) {
+          alert(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+          isSending = false;
+          document.querySelector('button[type="submit"]').disabled = false;
+        }
+      }
+    });
+
+    // Pre-fill the form by fetching the saved forfeiture message on page load
+    document.addEventListener("DOMContentLoaded", function() {
+      fetch("/api/get-saved-message")
+        .then(response => response.json())
+        .then(data => {
+          if (data.success && data.data) {
+            const phone = data.data.contact_number;
+            const msg = data.data.message;
+            console.log("Prepopulated phone:", phone);
+            console.log("Prepopulated message:", msg);
+            document.querySelector('input[name="number"]').value = phone;
+            document.querySelector('textarea[name="message"]').value = msg;
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching saved message:", error);
+        });
+    });
+
+    // Handle form submission to send the SMS command
+    document.getElementById('smsForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      if (isSending) return; // Prevent duplicate submissions
+      isSending = true;
+      document.querySelector('button[type="submit"]').disabled = true;
+
+      const formData = new FormData(this);
+      sentParts = 0;
+      failedParts = 0;
+
+      fetch('/send', {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      })
+      .then(response => response.text())
+      .then(data => {
+        console.log("📨 SMS sending started...");
+      })
+      .catch(error => {
+        console.error("❌ Error sending SMS:", error);
+        isSending = false;
+        document.querySelector('button[type="submit"]').disabled = false;
+      });
+
+      fetch('/get-message-parts')
+        .then(response => response.json())
+        .then(data => {
+          totalParts = data.totalParts || 1;
+        });
+    });
+  </script>
+</body>
+</html>
