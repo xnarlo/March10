@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../config/db");
 const { serialPort, parser } = require("../serial");
+const saveMessage = require("../utils/saveMessage"); // ✅ Utility for saving messages
 
 let latestMessageParts = 0;
 let isProcessing = false; // Prevent duplicate SMS commands
@@ -15,7 +15,7 @@ parser.on("data", (data) => {
     }
 });
 
-// Route to render the original SMS form (if needed)
+// Route to render the original SMS form
 router.get("/sendsms", (req, res) => {
     res.render("sendsms");
 });
@@ -55,97 +55,47 @@ router.post("/send", async (req, res) => {
     if (isProcessing) {
         return res.status(429).send("⚠️ SMS already being processed. Please wait.");
     }
-    
+
     isProcessing = true;
     let { number, message } = req.body;
     console.log("Received from /send:", { number, message, length: message.length });
-    const maxPartLength = 150;
-
-    if (message.length <= maxPartLength) {
-        const command = `SEND_SMS,${number},${message}\n`;
-        console.log("Command being sent:", command);
-        try {
-            serialPort.write(command);
-            await waitForSmsSent();
-            isProcessing = false;
-            return res.send("✅ SMS sent successfully.");
-        } catch (error) {
-            isProcessing = false;
-            return res.status(500).send(`❌ Error: ${error.message}`);
-        }
-    }
-
-    // Function to split message into parts without splitting words
-    const splitMessage = (msg, maxLen) => {
-        let parts = [];
-        let currentPart = "";
-
-        msg.split(" ").forEach(word => {
-            if ((currentPart + word).length > maxLen) {
-                parts.push(currentPart.trim());
-                currentPart = word + " ";
-            } else {
-                currentPart += word + " ";
-            }
-        });
-
-        if (currentPart.trim().length > 0) {
-            parts.push(currentPart.trim());
-        }
-
-        return parts;
-    };
-
-    const messageParts = splitMessage(message, maxPartLength);
-    latestMessageParts = messageParts.length;
-    let failedParts = 0;
 
     try {
-        for (let i = 0; i < messageParts.length; i++) {
-            let fullMessage = `(${i + 1}/${messageParts.length}) ${messageParts[i]}`;
-            let command = `SEND_SMS,${number},${fullMessage}\n`;
-            console.log(`Command being sent (part ${i + 1}/${messageParts.length}):`, command);
-            let attempts = 0;
-            let sent = false;
-            while (attempts < 3 && !sent) {
-                console.log(`Attempt ${attempts + 1} for part ${i + 1}`);
-                serialPort.write(command);
-                try {
-                    await waitForSmsSent();
-                    sent = true;
-                } catch (error) {
-                    attempts++;
-                    // Do not alert the user on each failed attempt—just log it.
-                    console.log(`Attempt ${attempts} failed for part ${i + 1}`);
+        // Split message into 160-char parts
+        const segments = message.match(/.{1,160}/g);
+        latestMessageParts = segments.length;
+
+        for (let i = 0; i < segments.length; i++) {
+            const part = segments[i];
+            const command = `SEND_SMS,${number},${part}\n`;
+//changed the line above from
+//const command = `AT+CMGS="${number}"\r${part}\x1A`;
+
+
+            serialPort.write(command, (err) => {
+                if (err) {
+                    throw new Error("Failed to write to serial port: " + err.message);
                 }
-                // Wait 2 seconds before trying again if not yet sent.
-                if (!sent && attempts < 3) {
-                    await new Promise(resolve => setTimeout(resolve, 2000));
-                }
-            }
-            if (!sent) {
-                failedParts++;
-            }
+            });
+
+            console.log(`📤 Sending part ${i + 1}/${segments.length}`);
+            await waitForSmsSent();
         }
-        isProcessing = false;
-        // Save the full message into the database after successful send
-        const saveMessageSql = "INSERT INTO saved_messages (contact_number, message) VALUES (?, ?)";
-        db.query(saveMessageSql, [number, message], (err, result) => {
-            if (err) {
-                console.error("❌ Error saving sent message to database:", err);
-            } else {
-                console.log("✅ Sent message saved with ID:", result.insertId);
-            }
+
+        // ✅ Save message to database after successful send
+        saveMessage({
+            recipient: number,
+            message: message,
+            sender: req.session?.user?.full_name || "Unknown"
         });
-        
-        if (failedParts === 0) res.send("✅ All SMS parts sent successfully.");
-        else res.status(500).send(`❌ Some messages failed. ${failedParts} parts were not sent.`);
+
+        res.status(200).send("✅ Message sent successfully!");
     } catch (error) {
+        console.error("❌ Error in /send:", error.message);
+        res.status(500).send("❌ Failed to send SMS.");
+    } finally {
         isProcessing = false;
-        res.status(500).send(`❌ Error: ${error.message}`);
     }
 });
 
-
 module.exports = router;
-

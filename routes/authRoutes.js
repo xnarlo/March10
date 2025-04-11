@@ -26,7 +26,7 @@ router.post('/login', (req, res) => {
             req.session.user = {
                 id: user.id,
                 username: user.username,
-                fullname: user.full_name
+                full_name: user.full_name
             };
             res.redirect('/');
         } else {
