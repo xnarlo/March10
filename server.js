@@ -2,11 +2,11 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const bodyParser = require("body-parser");
-const session = require("express-session"); // ✅ NEW: For user sessions
+const session = require("express-session");
 const { serialPort, parser } = require("./serial");
 const db = require("./config/db");
 const mainRoutes = require("./routes/mainRoutes");
-const authRoutes = require("./routes/authRoutes"); // ✅ NEW: Auth route
+const authRoutes = require("./routes/authRoutes");
 
 require("dotenv").config();
 
@@ -20,20 +20,29 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-// ✅ NEW: Setup session middleware
+// Session setup
 app.use(session({
-    secret: "your-secret-key", // Replace with a secure key in production
+    secret: "your-secret-key",
     resave: false,
     saveUninitialized: true
 }));
 
-// ✅ NEW: Make session available in EJS views
+// Make session accessible in views
 app.use((req, res, next) => {
     res.locals.session = req.session;
     next();
 });
 
-// ✅ Ensure MySQL is connected before starting the server
+// Restrict access to authenticated users
+app.use((req, res, next) => {
+    const publicPaths = ["/login", "/auth/login"];
+    if (!req.session.user && !publicPaths.includes(req.path)) {
+        return res.redirect("/login");
+    }
+    next();
+});
+
+// Connect to DB and start server
 db.connect((err) => {
     if (err) {
         console.error("❌ Database connection failed. Exiting...");
@@ -44,7 +53,7 @@ db.connect((err) => {
     }
 });
 
-// ✅ Handle serial port events
+// Serial port events
 serialPort.on("open", () => console.log("✅ Serial Port Opened"));
 serialPort.on("error", (err) => console.error("❌ Serial Port Error:", err.message));
 
@@ -59,6 +68,6 @@ parser.on("data", (data) => {
     }
 });
 
-// ✅ Use route files
+// Routes
 app.use("/", mainRoutes);
-app.use("/", authRoutes); 
+app.use("/", authRoutes);
