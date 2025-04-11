@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 
+/*
 // API endpoint to save the generated message
 router.post("/api/save-message", (req, res) => {
     const { contactNumber, message } = req.body;
@@ -18,6 +19,8 @@ router.post("/api/save-message", (req, res) => {
         return res.json({ success: true, id: result.insertId });
     });
 });
+*/
+
 
 // API endpoint to retrieve the most recent saved message
 router.get("/api/get-saved-message", (req, res) => {

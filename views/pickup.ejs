@@ -1,3 +1,4 @@
+<!-- ✅ pickup.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,65 +6,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pick-up Notification</title>
     <script>
-function searchSTN() {
-    const stn = document.getElementById("stnInput").value.trim();
-    if (stn === "") return; // Do nothing if input is empty
+        function searchSTN() {
+            const stn = document.getElementById("stnInput").value.trim();
+            if (stn === "") return;
 
-    fetch(`/pickup-search?stn=${stn}`)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                const details = data.details;
-                // Display STN details in a table
-                const resultHTML = `
-                    <h2>STN Details</h2>
-                    <table border="1">
-                        <tr><th>Service Tracking Number</th><td>${details.service_tracking_number}</td></tr>
-                        <tr><th>Service Slip Number</th><td id="ss_number">${details.service_slip_number}</td></tr>
-                        <tr><th>Client Name</th><td>${details.client_name}</td></tr>
-                        <tr><th>Contact Person</th><td>${details.contact_person}</td></tr>
-                        <tr><th>Contact Number</th><td id="contact_number">${details.contact_number}</td></tr>
-                        <tr><th>Email Address</th><td>${details.email}</td></tr>
-                        <tr><th>Model Number</th><td id="machine_model">${details.model_number}</td></tr>
-                        <tr><th>Serial Number</th><td id="serial_number">${details.serial_number}</td></tr>
-                        <tr><th>Warranty Status</th><td>${details.warranty_check}</td></tr>
-                        <tr><th>Quotation Sent Date</th><td>${details.quotation_sent}</td></tr>
-                        <tr><th>Quotation Received from Client</th><td>${details.quotation_received}</td></tr>
-                        <tr><th>Quotation Price</th><td id="quotation_price">${details.quotation_price}</td></tr>
-                        <tr><th>ETA of Parts</th><td>${details.eta_parts}</td></tr>
-                        <tr><th>Machine Status</th><td>${details.machine_status}</td></tr>
-                        <tr><th>Return Receipt Date</th><td>${details.rr_created}</td></tr>
-                    </table>
-                `;
-                document.getElementById("result").innerHTML = resultHTML;
+            fetch(`/pickup-search?stn=${stn}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const details = data.details;
+                        const resultHTML = `
+                            <h2>STN Details</h2>
+                            <table border="1">
+                                <tr><th>Service Tracking Number</th><td>${details.service_tracking_number}</td></tr>
+                                <tr><th>Service Slip Number</th><td id="ss_number">${details.service_slip_number}</td></tr>
+                                <tr><th>Client Name</th><td>${details.client_name}</td></tr>
+                                <tr><th>Contact Person</th><td>${details.contact_person}</td></tr>
+                                <tr><th>Contact Number</th><td id="contact_number">${details.contact_number}</td></tr>
+                                <tr><th>Email Address</th><td>${details.email}</td></tr>
+                                <tr><th>Model Number</th><td id="machine_model">${details.model_number}</td></tr>
+                                <tr><th>Serial Number</th><td id="serial_number">${details.serial_number}</td></tr>
+                                <tr><th>Warranty Status</th><td>${details.warranty_check}</td></tr>
+                                <tr><th>Quotation Sent Date</th><td>${details.quotation_sent}</td></tr>
+                                <tr><th>Quotation Received from Client</th><td>${details.quotation_received}</td></tr>
+                                <tr><th>Quotation Price</th><td id="quotation_price">${details.quotation_price}</td></tr>
+                                <tr><th>ETA of Parts</th><td>${details.eta_parts}</td></tr>
+                                <tr><th>Machine Status</th><td>${details.machine_status}</td></tr>
+                                <tr><th>Return Receipt Date</th><td>${details.rr_created}</td></tr>
+                            </table>
+                        `;
+                        document.getElementById("result").innerHTML = resultHTML;
+                        document.getElementById("contactField").value = details.contact_number;
 
-                // Auto-fill the contact number field
-                document.getElementById("contactField").value = details.contact_number;
+                        if (!document.getElementById("withoutBalance").checked &&
+                            !document.getElementById("withBalance").checked) {
+                            document.getElementById("withoutBalance").checked = true;
+                        }
 
-                // Reset balance field and paid amount
-                document.getElementById("balanceAmount").style.display = "none";
-                document.getElementById("paidAmount").value = "";
+                        generateMessage();
+                    } else {
+                        document.getElementById("stnInput").value = "";
+                        document.getElementById("result").innerHTML = "";
+                        alert("No matching data found.");
+                    }
+                })
+                .catch(error => console.error("❌ Error searching STN:", error));
+        }
 
-                // If no radio button is selected, default to "without balance"
-                if (!document.getElementById("withoutBalance").checked &&
-                    !document.getElementById("withBalance").checked) {
-                    document.getElementById("withoutBalance").checked = true;
-                }
-
-                // Generate the message based on current data
-                generateMessage();
-            } else {
-                document.getElementById("stnInput").value = "";
-                document.getElementById("result").innerHTML = "";
-                alert("No matching data found.");
-            }
-        })
-        .catch(error => console.error("❌ Error searching STN:", error));
-}
-
-
-
-        // Listen for Enter key on search field
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("stnInput").addEventListener("keypress", function(event) {
                 if (event.key === "Enter") {
@@ -76,11 +65,10 @@ function searchSTN() {
         function toggleBalanceField() {
             const balanceField = document.getElementById("balanceAmount");
             const paidAmount = document.getElementById("paidAmount");
-            const outstanding = document.getElementById("withBalance");
-            <!--removed checked from withblanace-->
+            const outstanding = document.getElementById("withBalance").checked;
 
             balanceField.style.display = outstanding ? "block" : "none";
-            paidAmount.value = ""; // Reset field when switching
+            paidAmount.value = "";
             generateMessage();
         }
 
@@ -95,9 +83,9 @@ function searchSTN() {
             if (outstanding) {
                 const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
                 const balance = quotationPrice - paidAmount;
-                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. A balance of Php ${balance.toFixed(2)} should be paid before the release. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590 or 92`;
+                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. A balance of Php ${balance.toFixed(2)} should be paid before the release. For further questions, please contact our Helpdesk team.`;
             } else {
-                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. For further questions, please contact our Helpdesk team. Globe: 09178306928 Smart: 09399170587 Landline: 87147590`;
+                message = `This is a generated message, do not reply. The ${machineModel} under SS number ${ssNumber} with serial number: ${serialNumber}, is ready for pickup. For further questions, please contact our Helpdesk team.`;
             }
 
             document.getElementById("generatedText").value = message;
@@ -107,38 +95,19 @@ function searchSTN() {
             const contactNumber = document.getElementById("contactField").value;
             const message = document.getElementById("generatedText").value;
 
-            console.log("Contact Number:", contactNumber);
-            console.log("Generated Message:", message);
-
             if (!contactNumber || !message) {
                 alert("⚠️ Contact number and message cannot be empty.");
                 return;
             }
 
-            fetch("/api/save-message", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contactNumber, message })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Redirect to the new SMS page after successful save
-                    window.location.href = "/pickup-sms-page";
-                } else {
-                    alert("❌ Error saving message: " + (data.error || data.message));
-                }
-            })
-            .catch(error => {
-                console.error("❌ Error:", error);
-                alert("An error occurred while saving the message.");
-            });
+            const encodedNumber = encodeURIComponent(contactNumber);
+            const encodedMessage = encodeURIComponent(message);
+            window.location.href = `/pickup-sms-page?number=${encodedNumber}&message=${encodedMessage}`;
         }
     </script>
 </head>
 <body>
     <h1>Pick-up Notification</h1>
-
     <label for="stnInput">Enter STN:</label>
     <input type="text" id="stnInput" name="stn" placeholder="Enter STN">
     <button onclick="searchSTN()">Search STN</button>
@@ -150,15 +119,8 @@ function searchSTN() {
     <input type="text" id="contactField" readonly>
 
     <h2>Generate Pickup Message</h2>
-
-    <label>
-        <input type="radio" name="balanceOption" id="withoutBalance" onchange="toggleBalanceField()">
-        Without balance
-    </label>
-    <label>
-        <input type="radio" name="balanceOption" id="withBalance" onchange="toggleBalanceField()">
-        With outstanding balance
-    </label>
+    <label><input type="radio" name="balanceOption" id="withoutBalance" onchange="toggleBalanceField()"> Without balance</label>
+    <label><input type="radio" name="balanceOption" id="withBalance" onchange="toggleBalanceField()"> With balance</label>
 
     <div id="balanceAmount" style="display: none;">
         <label for="paidAmount">Amount Paid:</label>

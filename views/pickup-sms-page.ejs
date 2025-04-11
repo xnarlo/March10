@@ -1,3 +1,4 @@
+<!-- ✅ pickup-sms-page.ejs -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,14 +16,22 @@
   </form>
 
   <script>
-    // Initialize variables for SMS sending
     const socket = io();
     let totalParts = 1;
     let sentParts = 0;
     let failedParts = 0;
     let isSending = false;
 
-    // Listen for SMS status events via Socket.io
+    // Prefill values from URL params
+    document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const number = urlParams.get("number");
+      const message = urlParams.get("message");
+
+      if (number) document.querySelector("input[name='number']").value = number;
+      if (message) document.querySelector("textarea[name='message']").value = message;
+    });
+
     socket.on('sms_status', (status) => {
       if (status === "SMS_SENT") {
         sentParts++;
@@ -47,29 +56,9 @@
       }
     });
 
-    // Pre-fill the form by fetching the saved message on page load
-    document.addEventListener("DOMContentLoaded", function() {
-      fetch("/api/get-saved-message")
-        .then(response => response.json())
-        .then(data => {
-          if (data.success && data.data) {
-            const phone = data.data.contact_number;
-            const msg = data.data.message;
-            console.log("Prepopulated phone:", phone);
-            console.log("Prepopulated message:", msg);
-            document.querySelector('input[name="number"]').value = phone;
-            document.querySelector('textarea[name="message"]').value = msg;
-          }
-        })
-        .catch(error => {
-          console.error("Error fetching saved message:", error);
-        });
-    });
-
-    // Handle form submission to send the SMS command
     document.getElementById('smsForm').addEventListener('submit', function(event) {
       event.preventDefault();
-      if (isSending) return; // Prevent duplicate submissions
+      if (isSending) return;
       isSending = true;
       document.querySelector('button[type="submit"]').disabled = true;
 
@@ -100,4 +89,3 @@
   </script>
 </body>
 </html>
-
