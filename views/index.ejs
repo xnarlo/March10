@@ -7,11 +7,8 @@
 </head>
 <body>
 
-    <% if (session && session.user) { %>
-        <div style="text-align: right; padding: 10px;">
-            <strong><%= session.user.fullname %></strong> | <a href="/logout">Logout</a>
-        </div>
-    <% } %>
+    
+    <%- include('partials/navbar') %>
     
 
 
