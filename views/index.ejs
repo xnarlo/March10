@@ -6,8 +6,20 @@
     <title><%= title %></title>
 </head>
 <body>
+
+    <% if (session && session.user) { %>
+        <div style="text-align: right; padding: 10px;">
+            <strong><%= session.user.fullname %></strong> | <a href="/logout">Logout</a>
+        </div>
+    <% } %>
+    
+
+
     <h1>Welcome to the Home Page</h1>
     <p>Select an option from the dropdown inside each card:</p>
+
+
+    
 
     <div class="card-container">
 

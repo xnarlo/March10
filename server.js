@@ -2,9 +2,11 @@ const express = require("express");
 const http = require("http");
 const { Server } = require("socket.io");
 const bodyParser = require("body-parser");
+const session = require("express-session"); // ✅ NEW: For user sessions
 const { serialPort, parser } = require("./serial");
 const db = require("./config/db");
 const mainRoutes = require("./routes/mainRoutes");
+const authRoutes = require("./routes/authRoutes"); // ✅ NEW: Auth route
 
 require("dotenv").config();
 
@@ -15,26 +17,37 @@ const port = 3000;
 
 app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json()); // Add this line to parse JSON request bodies
+app.use(express.json());
 app.use(express.static("public"));
 
-// Ensure MySQL is connected before starting the server
+// ✅ NEW: Setup session middleware
+app.use(session({
+    secret: "your-secret-key", // Replace with a secure key in production
+    resave: false,
+    saveUninitialized: true
+}));
+
+// ✅ NEW: Make session available in EJS views
+app.use((req, res, next) => {
+    res.locals.session = req.session;
+    next();
+});
+
+// ✅ Ensure MySQL is connected before starting the server
 db.connect((err) => {
     if (err) {
         console.error("❌ Database connection failed. Exiting...");
-        process.exit(1); // Stop the server if the database fails
+        process.exit(1);
     } else {
         console.log("✅ Connected to MySQL Database");
-        // Start server only if DB is connected
         server.listen(port, () => console.log(`🚀 Server running on port ${port}`));
     }
 });
 
-// Handle serial port events
+// ✅ Handle serial port events
 serialPort.on("open", () => console.log("✅ Serial Port Opened"));
 serialPort.on("error", (err) => console.error("❌ Serial Port Error:", err.message));
 
-// Emit serial events to clients
 parser.on("data", (data) => {
     const trimmedData = data.trim();
     console.log("📩 Received from Arduino:", trimmedData);
@@ -46,5 +59,6 @@ parser.on("data", (data) => {
     }
 });
 
-// Use routes
+// ✅ Use route files
 app.use("/", mainRoutes);
+app.use("/", authRoutes); 

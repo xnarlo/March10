@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const db = require("../config/db");
 const { serialPort, parser } = require("../serial");
 
 let latestMessageParts = 0;
@@ -127,6 +128,16 @@ router.post("/send", async (req, res) => {
             }
         }
         isProcessing = false;
+        // Save the full message into the database after successful send
+        const saveMessageSql = "INSERT INTO saved_messages (contact_number, message) VALUES (?, ?)";
+        db.query(saveMessageSql, [number, message], (err, result) => {
+            if (err) {
+                console.error("❌ Error saving sent message to database:", err);
+            } else {
+                console.log("✅ Sent message saved with ID:", result.insertId);
+            }
+        });
+        
         if (failedParts === 0) res.send("✅ All SMS parts sent successfully.");
         else res.status(500).send(`❌ Some messages failed. ${failedParts} parts were not sent.`);
     } catch (error) {
