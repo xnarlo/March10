@@ -4,7 +4,7 @@
     position: relative;
     top: 0;
     width: 100%;
-    background-color: white;
+    background-color: 	#0275d8;
     padding: 12px 24px;
     display: flex;
     justify-content: space-between;
@@ -25,23 +25,23 @@
 .nav-links a {
     margin-right: 16px;
     text-decoration: none;
-    color: #2c2c2c;
+    color: #ffffff;
     font-weight: 500;
 }
 
 .nav-links a:hover {
-    color: #0066ff;
+    color: #494949;
 }
 
 .nav-user {
     font-size: 14px;
-    color: #333;
+    color: #d4d4d4;
     gap: 8px;
     overflow-wrap: anywhere;
 }
 
 .nav-user a {
-    color: #0066ff;
+    color: #8f8f8f;
     text-decoration: none;
     white-space: nowrap;
 }
