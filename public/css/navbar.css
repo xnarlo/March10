@@ -1,0 +1,51 @@
+/* public/css/navbar.css */
+
+.navbar {
+    position: relative;
+    top: 0;
+    width: 100%;
+    background-color: white;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+.nav-links,
+.nav-user {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.nav-links a {
+    margin-right: 16px;
+    text-decoration: none;
+    color: #2c2c2c;
+    font-weight: 500;
+}
+
+.nav-links a:hover {
+    color: #0066ff;
+}
+
+.nav-user {
+    font-size: 14px;
+    color: #333;
+    gap: 8px;
+    overflow-wrap: anywhere;
+}
+
+.nav-user a {
+    color: #0066ff;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.nav-user a:hover {
+    text-decoration: underline;
+}
